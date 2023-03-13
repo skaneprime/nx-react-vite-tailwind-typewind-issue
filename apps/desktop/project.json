@@ -1,0 +1,97 @@
+{
+  "name": "desktop",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/desktop/src",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx serve-frontend desktop", "tauri dev"]
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "commands": [
+          "nx build-frontend desktop",
+          {
+            "command": "tauri build -d -c ./apps/desktop/src-tauri/tauri.conf.json"
+          }
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "production": {
+          "mode": "production",
+          "outputHashing": "all"
+        },
+        "development": {
+          "mode": "development",
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      }
+    },
+    "build-frontend": {
+      "executor": "@nrwl/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/desktop/dist",
+        "assets": [
+          "apps/desktop/src/favicon.ico",
+          "apps/desktop/src/assets",
+          {
+            "input": "apps/desktop/src-tauri/icons",
+            "glob": "**/*",
+            "output": "assets/tauri/icons"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "mode": "production"
+        },
+        "development": {
+          "mode": "development"
+        }
+      }
+    },
+    "serve-frontend": {
+      "executor": "@nrwl/vite:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "desktop:build-frontend"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "desktop:build-frontend:production",
+          "hmr": false
+        },
+        "development": {
+          "browserTarget": "desktop:build-frontend:development",
+          "debug": true,
+          "hmr": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "apps/desktop/src/**/*.ts",
+          "apps/desktop/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": ["type:app"]
+}

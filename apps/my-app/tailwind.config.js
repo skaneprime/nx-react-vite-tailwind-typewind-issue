@@ -1,6 +1,6 @@
 const { createGlobPatternsForDependencies } = require('@nrwl/react/tailwind');
 const { join } = require('path');
-const { typewindTransform } = require('typewind/transform')
+const { typewindTransforms } = require('typewind/transform')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
       ),
       ...createGlobPatternsForDependencies(__dirname),
     ],
-    transform: typewindTransform
+    transform: typewindTransforms
   },
   theme: {
     extend: {},
